@@ -1,21 +1,18 @@
 "use client"
-import React, { useEffect, useState } from 'react'
 import { DateTimePicker } from '@/components/constants/DateTimePicker'
 import { RadioOption } from '@/components/constants/Form'
-import { Switch } from '@/components/ui/switch'
-import { CloseIcon, StarBadgeIcon } from '@/components/constants/Icons'
-import { Slider } from '@/components/ui/slider'
 import TwoWaySliderWithPopover from '@/components/constants/RangeSelector'
-import Rating from '../Rating'
-import { SheetClose } from '@/components/ui/sheet'
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
-import Cookies from "js-cookie"
+import { Switch } from '@/components/ui/switch'
+import { useLocation } from '@/lib/LocationProvider'
 import { useQueryClient } from '@tanstack/react-query'
-import { salonQueries } from '@/lib/saloonQueries'
+import Cookies from "js-cookie"
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import Rating from '../Rating'
 
 function FilterSidebar({ filters, setFilters, totalItems, categories }: any) {
     const queryClient = useQueryClient()
-
+const { location } = useLocation();
     const router = useRouter()
     const pathName = usePathname()
     const searchParams = useSearchParams()
@@ -34,29 +31,61 @@ function FilterSidebar({ filters, setFilters, totalItems, categories }: any) {
         "Other"
     ]
     const { lang } = useParams();
-    let cookieCoords: any = Cookies.get("coords")
-    let coords = cookieCoords ? JSON.parse(cookieCoords) : []
-    let longitude = coords?.[0]
-    let latitude = coords?.[1]
+  // ✅ 1️⃣ Get fallback coords from cookie (before user gives location permission)
+  const cookieCoords: any = Cookies.get("coords");
+  const coords = cookieCoords ? JSON.parse(cookieCoords) : [];
+  const longitudeCookie = coords?.[0];
+  const latitudeCookie = coords?.[1];
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            console.log(categoriesFiltered,'categoriesFilteredcategoriesFiltered')
-            setFilters({
-                ...filters,
-                targetGroup: targetGroup.length ? targetGroup.join(",") : undefined,
-                Service_names:categoriesFiltered.length ? categoriesFiltered.join(",") : undefined,
-                rating: rating || undefined,
-                minPrice: priceRange[0] || undefined,
-                maxPrice: priceRange[1] || undefined,
-                date: date || undefined,
-                longitude,
-                latitude,
-            })
-        }, 500) // debounce delay
+  // ✅ 2️⃣ Always prefer live location (from LocationProvider) over cookie
+  const longitude =
+    Array.isArray(location) && location.length === 2
+      ? location[0]
+      : longitudeCookie;
+  const latitude =
+    Array.isArray(location) && location.length === 2
+      ? location[1]
+      : latitudeCookie;
 
-        return () => clearTimeout(handler)
-    }, [targetGroup, rating, priceRange, date, longitude, latitude,categoriesFiltered])
+  // ✅ 3️⃣ Whenever any filter OR location changes → update filters in parent
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setFilters({
+        ...filters,
+        targetGroup: targetGroup.length ? targetGroup.join(",") : undefined,
+        Service_names: categoriesFiltered.length
+          ? categoriesFiltered.join(",")
+          : undefined,
+        rating: rating || undefined,
+        minPrice: priceRange[0] || undefined,
+        maxPrice: priceRange[1] || undefined,
+        date: date || undefined,
+        longitude,
+        latitude,
+      });
+    }, 400); // small debounce
+
+    return () => clearTimeout(handler);
+  }, [
+    targetGroup,
+    rating,
+    priceRange,
+    date,
+    longitude,
+    latitude,
+    categoriesFiltered,
+  ]);
+
+  // ✅ 4️⃣ Optional: immediately push filters once location is received (no delay)
+  useEffect(() => {
+    if (longitude && latitude) {
+      setFilters((prev: any) => ({
+        ...prev,
+        longitude,
+        latitude,
+      }));
+    }
+  }, [longitude, latitude]);
 
 
     return (

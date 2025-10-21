@@ -60,6 +60,9 @@ function SignUp({ lang, role }: PropType) {
             });
             router.push(`/${lang}/${role}/verify-email/sign-up`);
         },
+        onError:(err)=>{
+            toast.error(err.message)
+        }
     });
 
     const handleChange = (field: keyof typeof form) => (e: any) => {

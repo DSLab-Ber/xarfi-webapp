@@ -8,6 +8,8 @@ import { Clock } from 'lucide-react';
 import Image from '@/components/constants/Image';
 import { useParams } from 'next/navigation';
 import React, { ReactNode, useEffect, useState } from 'react'
+import { toggleOrderNotifcation } from '@/lib/api/user/User';
+import { toast } from 'sonner';
 
 type Props = {
     className?: string;
@@ -19,6 +21,7 @@ type Props = {
 function OrderConfirmed({ className, open, setOpen, orderDetails }: Props) {
     const { id }: any = useParams()
     const [checked, setChecked] = useState(false)
+        const [reminderLoader, setReminderLoader] = useState(false)
     const onCheckedChange = () => {
         setChecked(!checked)
     }
@@ -31,6 +34,24 @@ function OrderConfirmed({ className, open, setOpen, orderDetails }: Props) {
     useEffect(() => {
         console.log("Dialog open:", open);
     }, [open]);
+
+    const reminder = async () => {
+        setReminderLoader(true);
+        await toggleOrderNotifcation(orderDetails?._id)
+            .then((data) => {
+                console.log("then");
+                setReminderLoader(false);
+                setChecked(!checked);
+                toast.success(data?.message);
+            })
+            .catch((err) => {
+                console.log("catch");
+                setReminderLoader(false);
+                setChecked(checked);
+                toast.error(err?.message || "failed");
+            });
+    };
+
     return (
         <>
             <Dialog open={open} onOpenChange={(nextOpen) => {
@@ -93,7 +114,7 @@ function OrderConfirmed({ className, open, setOpen, orderDetails }: Props) {
                                             <h5 className='font-urbanist font-bold md:text-[20px] text-sm leading-[130%] tracking-[0] mb-0'>Send Reminder</h5>
                                             <Switch
                                                 checked={checked}
-                                                onCheckedChange={onCheckedChange}
+                                                onCheckedChange={reminder}
                                                 className={`
         data-[state=checked]:bg-[#FF8C26] 
         data-[state=unchecked]:bg-neutral-200

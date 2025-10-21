@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../ui/dialog'
 import { LogoutIcon } from './Icons'
 import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import Cookies from "js-cookie";
 import { useLanguage } from '@/providers/language-provider'
 import { useProfileStore } from '@/stores/profile'
@@ -14,6 +14,7 @@ type Props = {
 
 function LogoutModel({ children }: Props) {
     const router = useRouter()
+    const { lang }: any = useParams()
     const clearAuth = useAuthStore((state) => state.clearAuth);
     const clearProfile = useProfileStore((state) => state.clearProfile);
     const { language } = useLanguage();
@@ -41,7 +42,7 @@ function LogoutModel({ children }: Props) {
                                 Cookies.remove("role")
                                 clearAuth()
                                 clearProfile()
-                                router.push(`/${language}/user/login`); // redirect after logout
+                                router.push(`/${lang}/user/login`); // redirect after logout
                             }}
                         >
                             Yes, Logout

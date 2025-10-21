@@ -145,32 +145,7 @@ function SaloonDetailPage({ role, data }: PropType) {
         autoplay: true,
     }
     console.log(salon, 'salonsalonsalon')
-    // const setBooking = async (bookingData: any, services: any) => {
-    //     try {
-    //         console.log(bookingData, "bookingData")
-    //         setLoader(true)
-    //         await BookingApi(services, bookingData?.master, bookingData?.owner, bookingData?.date, bookingData?.time, bookingData?.bookingFor?.otherThenMyself, bookingData?.bookingFor?.guestName)
-    //         clearServicesForOwner(id)
-    //     } catch (err) {
-    //         setLoader(false)
-    //         console.log(err)
-    //     } finally {
-    //         setLoader(false)
-    //     }
-    // }
 
-    // useEffect(() => {
-    //     if (bookingDetailsParam) {
-    //         let obj: any = JSON.parse(bookingDetailsParam)
-    //         const services = obj?.items.map((a: any, i: number) => {
-    //             return {
-    //                 _id: a.service,
-    //                 quantity: 1
-    //             }
-    //         })
-    //         setBooking(obj, services)
-    //     }
-    // }, [bookingDetailsParam])
 
 
     return (

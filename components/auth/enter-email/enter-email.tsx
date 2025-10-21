@@ -48,6 +48,9 @@ function EnterEmail({ lang, role }: PropType) {
             router.push(`/${lang}/${role}/verify-email/forgot-password`);
             setEmail("")
         },
+        onError: (err) => {
+            toast.error(err.message)
+        }
     })
     const handleSubmit = () => {
         if (validate()) {

@@ -152,7 +152,7 @@ function BookingPopup({ children, className, salon, refetch }: Props) {
             let master = masters.filter(obj => obj._id === masterIdSession)?.[0]
             setSelectedMaster(master)
         }
-        if(timeSlotSession){
+        if (timeSlotSession) {
             setSelectedSlot(timeSlotSession)
         }
         if (selectedMaster) {
@@ -200,20 +200,31 @@ function BookingPopup({ children, className, salon, refetch }: Props) {
         setOpen(false)
         clearServicesForOwner(id)
     }
-    const setBooking = async () => {
-        try {
-            let selectedDate = `${monthYear.year}-${pad(months.indexOf(monthYear.month) + 1)}-${pad(date)}`
-            await BookingApi(serviceList, selectedMaster._id, id, selectedDate, selectedSlot, bookingForSomeone, guestName)
-                .then((res) => {
-                    // clearAll()
-                    toast.success(res?.message)
+const setBooking = async () => {
+    try {
+        const selectedDate = `${monthYear.year}-${pad(months.indexOf(monthYear.month) + 1)}-${pad(date)}`;
+        const res = await BookingApi(
+            serviceList,
+            selectedMaster._id,
+            id,
+            selectedDate,
+            selectedSlot,
+            bookingForSomeone,
+            guestName
+        );
 
-                })
-            return 'a'
-        } catch (err) {
-            console.log(err)
+        // 👇 Handle API-level failure manually
+        if (!res?.success) {
+            throw new Error(res?.message || "Something went wrong");
         }
+
+        return res;
+    } catch (err) {
+        console.error("Error in setBooking:", err);
+        throw err; // rethrow so it reaches outer catch
     }
+};
+
     const handleSignupContinue = () => {
         let selectedDate = `${monthYear.year}-${pad(months.indexOf(monthYear.month) + 1)}-${pad(date)}`
         setBookingSession(selectedDate, selectedMaster._id, selectedSlot, guestName, id);

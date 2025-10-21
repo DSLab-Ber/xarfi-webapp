@@ -25,11 +25,6 @@ type HomeProps = {
 
 function Home({ categories }: HomeProps) {
     const { lang }: any = useParams()
-    // let cookieCoords: any = Cookies.get('coords')
-    // let coords = cookieCoords ? JSON.parse(cookieCoords) : []
-    // let longitude = coords?.[0]
-    // let latitude = coords?.[1]
-    // const [selectedCategory, setSelectedCategory] = useState('')
 
     const [filters, setFilters] = useState<any>({
         page: 1,

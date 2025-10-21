@@ -232,8 +232,79 @@ export const getSaloon = async (id: string, lang: string, lat: string, lng: stri
         `${process.env.NEXT_PUBLIC_API_URL}/api/user/salon-detail/${id}?lang=${lang}${lat ? `&latitude=${lat}` : ''}${lng ? `&longitude=${lng}` : ''}`
     );
 
-    // ✅ Fetch from API
     const res = await axios.get(url.toString());
     const data = await res?.data?.data;
     return data
-} 
+}
+
+export const toggleBookingNotifcation = async (id: string) => {
+    try {
+        const formData = new FormData();
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const url = new URL(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/booking/notify-me/${id}`
+        );
+
+        const res = await axios.put(url.toString(), formData, {
+            headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+            },
+            withCredentials: true,
+        });
+
+        if (!res?.data?.success) {
+            throw new Error(res?.data?.message || "Something went wrong");
+        }
+
+        return res?.data;
+    } catch (err: any) {
+        const message =
+            err?.response?.data?.message || 
+            err?.message ||                 
+            "Something went wrong";         
+
+        throw new Error(message);
+    }
+};
+
+
+
+
+
+export const toggleOrderNotifcation = async (id: string) => {
+    try {
+        const formData = new FormData();
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const url = new URL(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/user/notify-order/${id}`
+        );
+
+        const res = await axios.put(url.toString(), formData, {
+            headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+            },
+            withCredentials: true,
+        });
+
+        if (!res?.data?.success) {
+            throw new Error(res?.data?.message || "Something went wrong");
+        }
+
+        return res?.data;
+    } catch (err: any) {
+        const message =
+            err?.response?.data?.message || 
+            err?.message ||                 
+            "Something went wrong";         
+
+        throw new Error(message);
+    }
+};
