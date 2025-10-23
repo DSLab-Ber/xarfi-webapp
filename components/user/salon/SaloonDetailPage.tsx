@@ -26,6 +26,7 @@ import { useProductStore } from '@/stores/productCart'
 import { BookingApi, checkoutProduct, getSaloon } from '@/lib/api/user/User'
 import Spinner from '@/components/constants/Spinner'
 import OrderConfirmed from '../constants/OrderConfirmed'
+import { ShareModal } from '@/components/constants/SalonShareModal'
 interface PropType {
     lang: string;
     role: string
@@ -131,7 +132,15 @@ function SaloonDetailPage({ role, data }: PropType) {
             setMaster(salonData?.masters)
         }
         if (salonData?.reviews?.length) {
-            setReviews(salonData?.reviews)
+            let reviews = salonData?.reviews?.map((a: any, i: number) => {
+                return {
+                    name: a.name,
+                    image: a.image,
+                    rating: a.salonRating,
+                    review: a.salonReview
+                }
+            })
+            setReviews(reviews)
         }
 
     }, [salonData])
@@ -202,9 +211,10 @@ function SaloonDetailPage({ role, data }: PropType) {
                     <div className=''>
                         <div className='flex items-center gap-2.5 mb-2.5'>
                             <h5 className='font-urbanist font-bold md:text-[32px] text-xl md:leading-[100%] leading-[130%] tracking-[0] mb-0 capitalize'>{salon?.name}</h5>
-                            <button className='h-[39px] aspect-square bg-background-secondary rounded-[10px] flex items-center justify-center max-md:hidden' onClick={handleCopy}>
+                            <ShareModal />
+                            {/* <button className='h-[39px] aspect-square bg-background-secondary rounded-[10px] flex items-center justify-center max-md:hidden'>
                                 <ShareIcon />
-                            </button>
+                            </button> */}
                             <a href={`https://www.google.com/maps?q=${salon?.location?.lat},${salon?.location?.lng}`} target='_blank' className='h-[39px] aspect-square bg-background-secondary rounded-[10px] flex items-center justify-center text-foreground max-md:hidden'
 
                             >
@@ -233,9 +243,15 @@ function SaloonDetailPage({ role, data }: PropType) {
                     </div>
                     <div className='flex justify-end items-start'>
                         <div className='grid gap-[27px]'>
-                            <div className='bg-[#16A34A] font-urbanist font-semibold md:text-[16px] text-xs leading-[130%] tracking-[0] px-[15px] py-[5px] rounded-full'>
-                                Open
-                            </div>
+                            {salon?.status === 'closed' ?
+                                <div className='bg-[#FF0F0F] capitalize font-urbanist font-semibold md:text-[16px] text-xs leading-[130%] tracking-[0] px-[15px] py-[5px] rounded-full'>
+                                    {salon?.status}
+                                </div>
+                                :
+                                <div className='bg-[#16A34A] capitalize font-urbanist font-semibold md:text-[16px] text-xs leading-[130%] tracking-[0] px-[15px] py-[5px] rounded-full'>
+                                    {salon?.status}
+                                </div>
+                            }
                             <div className='flex items-end flex-col gap-0.5'>
                                 <div className='bg-background-secondary py-[5px] px-1.5 rounded-[7px] flex items-center gap-[5px] w-fit font-urbanist font-semibold md:text-[16px] text-[14px] leading-[84%] tracking-[0]'>
                                     <RatingStar size={16} className="max-md:w-[12px]" />

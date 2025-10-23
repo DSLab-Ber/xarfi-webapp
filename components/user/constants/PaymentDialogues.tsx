@@ -18,16 +18,20 @@ type Props = {
     selectedSlot?: any;
     date?: any;
     clearAll?: any;
+    bookAgain?: boolean;
+    bookAgainService?: any[];
 }
 
-function PaymentDialogues({ children, className, setBooking, salon, selectedSlot, date, clearAll }: Props) {
+function PaymentDialogues({ children, className, setBooking, salon, selectedSlot, date, clearAll, bookAgain = false, bookAgainService }: Props) {
     const { id, lang }: any = useParams()
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
     const {
         clearServicesForOwner,
         getServicesForOwner,
     } = useServiceStore();
-    const serviceList = getServicesForOwner(id)
+    const serviceList = bookAgain ? bookAgainService?.map(({ service }: any) => {
+        return service
+    }) : getServicesForOwner(id)
     const paymentMethods = [
         {
             image: '/assets/cashIcon.svg',
@@ -101,6 +105,8 @@ function PaymentDialogues({ children, className, setBooking, salon, selectedSlot
                         selectedSlot={selectedSlot}
                         date={date}
                         clearAll={clearAll}
+                        bookAgain={bookAgain}
+                        bookAgainService={bookAgainService}
                     />
                     {/* <BookingConfirmed SheetClosePayment={SheetClose} className="bg-xarfi-orange w-full rounded-2xl md:py-[22.5px] py-[18px] font-urbanist font-semibold md:text-[20px] text-[14px] leading-[20px] tracking-[0] !text-white">
                         Continue

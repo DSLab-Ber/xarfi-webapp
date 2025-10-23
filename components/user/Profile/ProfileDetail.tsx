@@ -33,7 +33,7 @@ function ProfileDetail({ lang }: Props) {
                 </div>
                 <div className='lg:max-w-[456px] max-w-full w-full grid gap-[30px]'>
                     <div className='w-full'>
-                        <Image width={189} height={189} alt={profile?.image || "unknown"} className='rounded-full mx-auto max-md:w-[118px] aspect-square' src={'/assets/joseph.jpg'} />
+                        <Image width={189} height={189} alt={profile?.image || "unknown"} className='rounded-full mx-auto max-md:w-[118px] aspect-square' src={profile?.image} />
                     </div>
                     <div className='grid gap-5'>
                         {/* Full Name */}

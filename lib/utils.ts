@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -163,3 +164,86 @@ export const getTotalPrice = (services:any[] = []) => {
   if (!Array.isArray(services)) return 0;
   return services.reduce((sum, item) => sum + (item.price || 0), 0);
 };
+
+export const shortAddress = (fullAddress: string): string => {
+    if (!fullAddress) return "";
+
+    // Split address by commas and trim spaces
+    const parts = fullAddress.split(",").map((p) => p.trim());
+
+    // If we have fewer than 2 parts, return the original
+    if (parts.length < 2) return fullAddress;
+
+    // Get last two elements (city, country)
+    const country = parts[parts.length - 1];
+    const city = parts[parts.length - 2];
+
+    // Return formatted short address
+    return `${city}, ${country}`;
+};
+
+export const formatDateTime = (date: string, time: string): [string, string] => {
+    if (!date || !time) return ["", ""];
+
+    // Parse both into Date objects
+    const dateObj = new Date(date);
+    const timeObj = new Date(time);
+
+    // Format date: e.g., 27 Oct 2025
+    const formattedDate = dateObj.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+
+    // Format time: e.g., 13:00 (24-hour format)
+    const formattedTime = timeObj.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+
+    return [formattedDate, formattedTime];
+};
+
+
+export const isWithin48Hours = (date: string, time: string): boolean => {
+    if (!date || !time) return false;
+
+    try {
+        const dateObj = new Date(date);
+        const timeObj = new Date(time);
+
+        // Combine date + time into a single Date
+        const combined = new Date(
+            dateObj.getFullYear(),
+            dateObj.getMonth(),
+            dateObj.getDate(),
+            timeObj.getHours(),
+            timeObj.getMinutes(),
+            timeObj.getSeconds()
+        );
+
+        const now = new Date();
+        const diffMs = combined.getTime() - now.getTime();
+        const diffHours = diffMs / (1000 * 60 * 60);
+
+        // ✅ Return true if within next 48 hours
+        return diffHours > 0 && diffHours < 48;
+    } catch (err) {
+        return false;
+    }
+};
+
+
+
+// export const formatBookingDate = (isoString: string): string => {
+//   if (!isoString) return "";
+
+//   const date = new Date(isoString);
+//   const day = date.getUTCDate();
+//   const month = months[date.getUTCMonth()];
+//   const year = date.getUTCFullYear();
+
+//   return `${day} ${month} ${year}`;
+// };

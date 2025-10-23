@@ -19,9 +19,9 @@ type Props = {
 }
 
 function OrderConfirmed({ className, open, setOpen, orderDetails }: Props) {
-    const { id }: any = useParams()
+    const { id, lang }: any = useParams()
     const [checked, setChecked] = useState(false)
-        const [reminderLoader, setReminderLoader] = useState(false)
+    const [reminderLoader, setReminderLoader] = useState(false)
     const onCheckedChange = () => {
         setChecked(!checked)
     }
@@ -37,7 +37,7 @@ function OrderConfirmed({ className, open, setOpen, orderDetails }: Props) {
 
     const reminder = async () => {
         setReminderLoader(true);
-        await toggleOrderNotifcation(orderDetails?._id)
+        await toggleOrderNotifcation(orderDetails?._id, lang)
             .then((data) => {
                 console.log("then");
                 setReminderLoader(false);

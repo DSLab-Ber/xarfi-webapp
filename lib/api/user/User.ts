@@ -237,7 +237,7 @@ export const getSaloon = async (id: string, lang: string, lat: string, lng: stri
     return data
 }
 
-export const toggleBookingNotifcation = async (id: string) => {
+export const toggleBookingNotifcation = async (id: string, lang: string) => {
     try {
         const formData = new FormData();
         const token = document.cookie
@@ -246,7 +246,7 @@ export const toggleBookingNotifcation = async (id: string) => {
             ?.split("=")[1];
 
         const url = new URL(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/booking/notify-me/${id}`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/booking/notify-me/${id}?lang=${lang}`
         );
 
         const res = await axios.put(url.toString(), formData, {
@@ -263,9 +263,9 @@ export const toggleBookingNotifcation = async (id: string) => {
         return res?.data;
     } catch (err: any) {
         const message =
-            err?.response?.data?.message || 
-            err?.message ||                 
-            "Something went wrong";         
+            err?.response?.data?.message ||
+            err?.message ||
+            "Something went wrong";
 
         throw new Error(message);
     }
@@ -275,7 +275,7 @@ export const toggleBookingNotifcation = async (id: string) => {
 
 
 
-export const toggleOrderNotifcation = async (id: string) => {
+export const toggleOrderNotifcation = async (id: string, lang: string) => {
     try {
         const formData = new FormData();
         const token = document.cookie
@@ -284,7 +284,7 @@ export const toggleOrderNotifcation = async (id: string) => {
             ?.split("=")[1];
 
         const url = new URL(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/user/notify-order/${id}`
+            `${process.env.NEXT_PUBLIC_API_URL}/api/user/notify-order/${id}?lang=${lang}`
         );
 
         const res = await axios.put(url.toString(), formData, {
@@ -301,9 +301,83 @@ export const toggleOrderNotifcation = async (id: string) => {
         return res?.data;
     } catch (err: any) {
         const message =
-            err?.response?.data?.message || 
-            err?.message ||                 
-            "Something went wrong";         
+            err?.response?.data?.message ||
+            err?.message ||
+            "Something went wrong";
+
+        throw new Error(message);
+    }
+};
+
+export const toggleFavouriteBooking = async (id: string, lang: string) => {
+    try {
+        const formData = new FormData();
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const url = new URL(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/user/toggle-favorite-booking/${id}?lang=${lang}`
+        );
+
+        const res = await axios.put(url.toString(), formData, {
+            headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+            },
+            withCredentials: true,
+        });
+
+        if (!res?.data?.success) {
+            throw new Error(res?.data?.message || "Something went wrong");
+        }
+
+        return res?.data;
+    } catch (err: any) {
+        const message =
+            err?.response?.data?.message ||
+            err?.message ||
+            "Something went wrong";
+
+        throw new Error(message);
+    }
+};
+
+
+
+export const bookingRating = async (data: any, lang: string) => {
+    try {
+        const formData = new FormData();
+        const token = document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("token="))
+            ?.split("=")[1];
+
+        const url = new URL(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/booking/reviews?lang=${lang}`
+        );
+
+        for (let prop in data) {
+            formData.append(prop, data[prop])
+        }
+
+        const res = await axios.post(url.toString(), formData, {
+            headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+            },
+            withCredentials: true,
+        });
+
+        if (!res?.data?.success) {
+            throw new Error(res?.data?.message || "Something went wrong");
+        }
+
+        return res?.data;
+    } catch (err: any) {
+        const message =
+            err?.response?.data?.message ||
+            err?.message ||
+            "Something went wrong";
 
         throw new Error(message);
     }

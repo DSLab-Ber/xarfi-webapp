@@ -21,9 +21,11 @@ type Props = {
     selectedSlot?: any;
     date?: any;
     clearAll?: any;
+    bookAgain?: boolean;
+    bookAgainService?: any[] ;
 }
 
-function BookingConfirmed({ children, SheetClosePayment, className, setBooking, salon, selectedSlot, date, clearAll }: Props) {
+function BookingConfirmed({ children, SheetClosePayment, className, setBooking, salon, selectedSlot, date, clearAll, bookAgain = false, bookAgainService }: Props) {
     const { id, lang }: any = useParams()
     const [checked, setChecked] = useState(false)
     const [loader, setLoader] = useState(false)
@@ -38,24 +40,26 @@ function BookingConfirmed({ children, SheetClosePayment, className, setBooking, 
         clearServicesForOwner,
         getServicesForOwner,
     } = useServiceStore();
-    const serviceList = getServicesForOwner(id)
-    
-const reminder = async () => {
-    setReminderLoader(true);
-    await toggleBookingNotifcation(bookingData?._id)
-        .then((data) => {
-            console.log("then");
-            setReminderLoader(false);
-            setChecked(!checked);
-            toast.success(data?.message);
-        })
-        .catch((err) => {
-            console.log("catch");
-            setReminderLoader(false);
-            setChecked(checked);
-            toast.error(err?.message || "failed");
-        });
-};
+    const serviceList:any = bookAgain ? bookAgainService?.map(({ service }: any) => {
+        return service
+    }) : getServicesForOwner(id)
+
+    const reminder = async () => {
+        setReminderLoader(true);
+        await toggleBookingNotifcation(bookingData?._id, lang)
+            .then((data) => {
+                console.log("then");
+                setReminderLoader(false);
+                setChecked(!checked);
+                toast.success(data?.message);
+            })
+            .catch((err) => {
+                console.log("catch");
+                setReminderLoader(false);
+                setChecked(checked);
+                toast.error(err?.message || "failed");
+            });
+    };
 
     return (
         <>
@@ -149,7 +153,7 @@ const reminder = async () => {
                                             <div className='flex items-center justify-between'>
                                                 <h5 className='font-urbanist font-bold md:text-[20px] text-[sm leading-[130%] tracking-[0] mb-0'>Send Reminder</h5>
                                                 <Switch
-                                                disabled={reminderLoader}
+                                                    disabled={reminderLoader}
                                                     checked={checked}
                                                     onCheckedChange={reminder}
                                                     className={`

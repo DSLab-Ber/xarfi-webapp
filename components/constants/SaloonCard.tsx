@@ -58,9 +58,15 @@ function SaloonCard({ salon }: PropType) {
                             </div>
                         ))}
                     </Slider>
-                    <div className='bg-[#16A34A] absolute md:top-[25px] md:right-[25px] top-[10px] right-[10px] rounded-full font-urbanist font-semibold md:text-[18px] text-[12px] leading-[130%] tracking-[0] !text-white py-[5px] md:px-[19px] px-[15px]'>
-                        Open
+                    {salon?.status === 'closed' ? 
+                    <div className='bg-[#FF0F0F] capitalize absolute md:top-[25px] md:right-[25px] top-[10px] right-[10px] rounded-full font-urbanist font-semibold md:text-[18px] text-[12px] leading-[130%] tracking-[0] !text-white py-[5px] md:px-[19px] px-[15px]'>
+                        <span className='capitalize'>{salon?.status}</span>
                     </div>
+                    :
+                    <div className='bg-[#16A34A] capitalize absolute md:top-[25px] md:right-[25px] top-[10px] right-[10px] rounded-full font-urbanist font-semibold md:text-[18px] text-[12px] leading-[130%] tracking-[0] !text-white py-[5px] md:px-[19px] px-[15px]'>
+                        <span className='capitalize'>{salon?.status}</span>
+                    </div>
+                    }
                 </div>
                 <div className='md:p-[25px] p-2.5 flex justify-between items-start'>
                     <div>

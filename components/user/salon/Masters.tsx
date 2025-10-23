@@ -163,7 +163,15 @@ function Masters({ data, activeCat, loader, setLoader }: Proptype) {
                 setServices(data?.services)
             }
             if (data?.reviews?.length) {
-                setReviews(data?.reviews)
+                let reviews = data?.reviews?.map((a: any, i: number) => {
+                    return {
+                        name: a?.user?.name,
+                        image: a?.user?.image,
+                        rating: a?.masterRating,
+                        review: a?.masterReview
+                    }
+                })
+                setReviews(reviews)
             }
             setOpen(true)
 

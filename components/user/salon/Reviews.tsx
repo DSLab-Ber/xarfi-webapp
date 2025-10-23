@@ -11,7 +11,7 @@ function Reviews({ className = '2xl:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 gr
     return (
         <div className={`grid gap-x-[10px] gap-y-[20px] ${className}`}>
             {data.map((a: any, i: number) => (
-                <ReviewCard />
+                <ReviewCard data={a} key={i}/>
             ))}
         </div>
     )

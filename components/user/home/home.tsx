@@ -73,6 +73,13 @@ function Home({ categories }: HomeProps) {
                 }`
 
             const res = await axios.get(apiURL)
+            // ✅ Return a consistent shape
+            if (!res.data || !res.data.data) {
+                return {
+                    items: [],
+                    pagination: { currentPage: 1, totalPages: 1 },
+                }
+            }
             return res.data.data
         },
         getNextPageParam: (lastPage) => {
@@ -202,7 +209,7 @@ function Home({ categories }: HomeProps) {
                                     </div>
                                 </div>
                             </div>
-                            <SaloonsListing lang={lang} longitude={filters?.longitude} latitude={filters?.latitude} salons={salons} isLoading={isLoading} />
+                            <SaloonsListing lang={lang} longitude={filters?.longitude} latitude={filters?.latitude} salons={salons} isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
                         </div>
                     </div>
                 </Container>
